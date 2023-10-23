@@ -1,0 +1,67 @@
+/*imperative program*//**
+ * Der Hamster dreht sich um.
+ */
+void umdrehen()
+{
+	linksUm();
+	linksUm();
+}
+
+/** 
+ * Der Hamster checkt, of auf dem Feld vor ihm ein Korn liegt und kehrt wieder zurück.
+ * Ist dies der Fall, wird 'true' zurückgegeben.
+ * @return Logischer Wert, ob ein Korn entdeckt wurde.
+ */
+boolean vornKorn()
+{
+	boolean Korn = false; //return value
+	// remember: figure has to look in same direction after the check as before!
+	if (vornFrei() == true) {
+		vor();
+		if (kornDa() == true) Korn = true;
+		umdrehen();
+		vor();
+		umdrehen();
+	}
+	return Korn;
+}
+
+/**
+ * Der Hamster folgt einer geradlinigen Körnerspur. Ist sie aus, geht er an
+ * das letzte Feld, an dem noch ein Korn lag, zurück.
+ * @return Anzahl der Schritte
+ */
+int folgeKorn()
+{
+	int Steps = 0;
+	boolean Tmp = true; // we need this in order to avoid using 'break'
+	while (kornDa() == true && vornFrei() == true && Tmp == true) {
+		vor();
+		if (kornDa() == true) //check if the next field has seed
+			++Steps; //short form
+		// if not, go back and break the loop
+		else { umdrehen(); vor(); umdrehen(); Tmp = false;}
+	}
+	return Steps;
+}
+
+/**
+ */
+void main() {
+	boolean TmpBool = false; // we need this to remember indirectly the direction
+							 // of the seed line
+	for (int i=0; i<4; i++) {
+		if (vornKorn() == true) {
+			TmpBool = true;
+			break;  // <== 'Ein Mal ist kein Mal!'
+		}
+		linksUm();
+	}
+	
+	// 'TmpBool' is also used to check if some seed has been detected in the loop above
+	if (TmpBool == true) {
+		int Steps = folgeKorn();
+		schreib("Ich bin " + Steps + " Korn/Körnern gefolgt.");
+	}
+	else { schreib("Keine Spur gefunden."); }
+}
